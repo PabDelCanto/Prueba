@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
     <fragment
         android:id="@+id/fragmentList"
         class="org.bedu.listfragment.ListFragment"
@@ -16,7 +15,6 @@
         app:layout_constraintBottom_toTopOf="@id/half"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
     <fragment
         android:id="@+id/fragmentDetail"
         class="org.bedu.listfragment.DetailFragment"
@@ -33,5 +31,4 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".5" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
