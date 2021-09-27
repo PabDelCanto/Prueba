@@ -14,13 +14,14 @@ class MainActivity : AppCompatActivity() {
         listFragment.setListener{
             val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment
 
-            if(detailFragment != null){
+            // Pantalla grande, mostrar detalle en el fragment
+            if(detailFragment!=null){
                 detailFragment.showProduct(it)
-            }else{
+            } else{ //pantalla pequeña, navegar a un nuevo Activity
                 val intent = Intent(this, DetailActivity::class.java)
-                intent.putExtra(DetailActivity.PRODUCT, it)
+                intent.putExtra(DetailActivity.PRODUCT,it)
                 startActivity(intent)
-        }
+            }
         }
     }
 }

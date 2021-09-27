@@ -17,8 +17,7 @@ class DetailFragment : Fragment() {
     private lateinit var tvPrice: TextView
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
@@ -32,12 +31,14 @@ class DetailFragment : Fragment() {
         return view
     }
 
-    fun showProduct(product:Product){
-        view?.visibility=View.VISIBLE
+    fun showProduct(product: Product){
+        view?.visibility = View.VISIBLE
         tvProduct.text = product.name
         tvDescription.text = product.description
         rbRate.rating = product.rating
         imgProduct.setImageResource(product.idImage)
         tvPrice.text = product.price
+
     }
+
 }

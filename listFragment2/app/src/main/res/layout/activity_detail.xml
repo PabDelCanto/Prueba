@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/fragmentList"
-        class="org.bedu.listdetailfragment.DetailFragment"
+        class="org.bedu.listfragment.DetailFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

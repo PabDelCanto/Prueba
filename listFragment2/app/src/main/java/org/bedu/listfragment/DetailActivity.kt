@@ -17,6 +17,7 @@ class DetailActivity : AppCompatActivity() {
         val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment
         if (product != null) {
             detailFragment?.showProduct(product)
+
         }
 
     }

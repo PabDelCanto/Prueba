@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/fragmentList"
-        class="org.bedu.listdetailfragment.ListFragment"
+        class="org.bedu.listfragment.ListFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/fragmentDetail"
-        class="org.bedu.listdetailfragment.DetailFragment"
+        class="org.bedu.listfragment.DetailFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="@id/half"
