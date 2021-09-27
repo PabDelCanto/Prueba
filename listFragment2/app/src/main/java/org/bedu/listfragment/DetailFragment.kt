@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import coil.api.load
+import com.squareup.picasso.Picasso
 
 class DetailFragment : Fragment() {
     private lateinit var tvProduct: TextView
@@ -36,8 +38,8 @@ class DetailFragment : Fragment() {
         tvProduct.text = product.name
         tvDescription.text = product.description
         rbRate.rating = product.rating
-        imgProduct.setImageResource(product.idImage)
-        tvPrice.text = product.price
+        Picasso.with(requireContext()).load(product.idImage).into(imgProduct)
+        tvPrice.text = "$${product.price}"
 
     }
 
