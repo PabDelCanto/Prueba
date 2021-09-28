@@ -22,6 +22,25 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug{
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
+    }
+    flavorDimensions 'theme'
+    productFlavors{
+        light{
+            applicationId "org.bedu.buildvariant.light"
+            dimension "theme"
+            applicationIdSuffix ".light"
+            versionNameSuffix "-light"
+        }
+        dark{
+            applicationId "org.bedu.buildvariant.dark"
+            dimension "theme"
+            applicationIdSuffix ".dark"
+            versionNameSuffix "-dark"
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

@@ -8,14 +8,16 @@ class Product (
     val description: String,
     val price: String,
     val rating: Float,
-    val idImage: String
+    val idImage: String,
+    val numOpinions: Int
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readFloat()!!,
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.readInt()!!
     ) {
     }
 
@@ -25,6 +27,7 @@ class Product (
         parcel.writeString(price)
         parcel.writeFloat(rating)
         parcel.writeString(idImage)
+        parcel.writeInt(numOpinions)
     }
 
     override fun describeContents(): Int {

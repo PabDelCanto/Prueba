@@ -1,3 +1,39 @@
 <resources>
-    <string name="app_name">bedushop</string>
+    //Strings para la pantalla de inicio de sesion
+    <string name="app_name">Bedu shop</string>
+    <string name="inicioSesion"> INICIAR SESIÓN</string>
+    <string name="registro" translatable="false">Regístrate</string>
+    <string name="correo"> Correo electrónico</string>
+    <string name="pass">Contaseña</string>
+
+    //Mensajes de error
+    <string name="error1">Ingrese e-mail válido</string>
+    <string name="error2">Ingrese contraseña válida</string>
+
+    //Strings complementarios para la pantalla de registro
+
+    <string name="completeName"> Nombre completo</string>
+    <string name="telefono">Teléfono</string>
+    <string name="divider">---- o ----</string>
+    <string name="registro1" translatable="false">Regístrarse</string>
+
+
+    //Mensajes de error
+    <string name="requerido">campo requerido</string>
+
+
+    //Strings para la pantalla de Detalle de producto
+    <string name="statusNew">Nuevo</string>
+    <string name="sixMonth">En 6 meses sin intereses</string>
+    <string name="dispDom"> Disponible en tu domicilio</string>
+    <string name="entrega">Entrega mañana</string>
+    <string name="AgregarCarrito">AGREGAR AL CARRITO</string>
+    <string name="description">Descripción</string>
+
+    <!--STRINGS USADAS COMO EDIT TEXT
+    <string name="hintMail">nombre@ejemplo.com</string>
+    <string name="hintContraseña">Ingrese su contaseña</string>
+
+    <string name="mailIncorrecto">Ingrese una direccion de correo valida</string>
+    <string name="passIncorrecto">Ingrese una contraseña valida</string>-->
 </resources>
