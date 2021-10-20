@@ -1,0 +1,65 @@
+Index: app/src/main/java/org/bedu/bedushop/DetailActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.bedu.bedushop\r\n\r\nimport android.content.Intent\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport android.os.Bundle\r\nimport android.transition.Slide\r\nimport android.view.Gravity\r\nimport android.view.Menu\r\nimport android.view.View\r\nimport android.widget.Button\r\nimport android.widget.ImageView\r\nimport com.airbnb.lottie.LottieAnimationView\r\nimport io.realm.Realm\r\nimport kotlinx.coroutines.delay\r\nimport kotlinx.coroutines.runBlocking\r\nimport org.bedu.bedushop.Product\r\n\r\nclass DetailActivity : AppCompatActivity() {\r\n    companion object {\r\n        val PRODUCT = \"PRODUCT\"\r\n    }\r\n    private lateinit var addBoton: Button\r\n    private  var carritoFragment= CarritoFragment()\r\n    private lateinit var carroCompra: LottieAnimationView\r\n\r\n\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_detail)\r\n\r\n\r\n\r\n        carroCompra=findViewById(R.id.imgProduct)\r\n\r\n        //!! Transition sin terminar para el detail\r\n        val transition = Slide(Gravity.BOTTOM).apply {\r\n            duration = 500\r\n            excludeTarget(window.decorView.findViewById<View>(R.id.action_bar_container), true)\r\n            excludeTarget(android.R.id.statusBarBackground, true)\r\n            excludeTarget(android.R.id.navigationBarBackground, true)\r\n        }\r\n\r\n        window.enterTransition = transition\r\n        //!! Transition sin terminar para el detail\r\n\r\n        //ACA ES DONDE HAY QUE ARREGLAR QUE TRAIGA EL PRODUCTO CLICKEADO\r\n        val product = intent.get\r\n        val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment\r\n        if (product != null) {\r\n            detailFragment?.showProduct(product)\r\n/*\r\n        val product = intent.getParcelableExtra<Product>(PRODUCT)\r\n        val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment\r\n        if (product != null) {\r\n            detailFragment?.showProduct(product)\r\n\r\n        }*/\r\n\r\n        //Al seleccionar el boton de \"Agregar al Carrito \" se redirecciona al Activity de Shop, ingresando al fragmente de Carrito\r\n        // Te redirecciona porque le pasamos como valor de origen \"DETAIL\"\r\n        addBoton = findViewById(R.id.addCarrito)\r\n        addBoton.setOnClickListener{\r\n                runBlocking{\r\n                    animarCarrito(carroCompra,R.raw.carrito)\r\n                    delay(200)\r\n                }\r\n            val intent= Intent(this, Shop::class.java).apply {  }\r\n\r\n            //DATOS EXTRA\r\n            intent.putExtra(\"origen\", \"DETAIL\");\r\n\r\n            startActivity(intent)\r\n\r\n        }\r\n\r\n    }\r\n\r\n}\r\n    fun animarCarrito (imageView: LottieAnimationView, animation:Int){\r\n        imageView.setAnimation(animation)\r\n        imageView.speed=0.2f\r\n        imageView.playAnimation()\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/org/bedu/bedushop/DetailActivity.kt b/app/src/main/java/org/bedu/bedushop/DetailActivity.kt
+--- a/app/src/main/java/org/bedu/bedushop/DetailActivity.kt	
++++ b/app/src/main/java/org/bedu/bedushop/DetailActivity.kt	
+@@ -22,14 +22,15 @@
+     private lateinit var addBoton: Button
+     private  var carritoFragment= CarritoFragment()
+     private lateinit var carroCompra: LottieAnimationView
+-
++    private lateinit var products: List<Product>
+ 
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         setContentView(R.layout.activity_detail)
+ 
+-
++        val realm = Realm.getDefaultInstance()
++        products = realm.where(Product::class.java).findAll()
+ 
+         carroCompra=findViewById(R.id.imgProduct)
+ 
+@@ -45,10 +46,10 @@
+         //!! Transition sin terminar para el detail
+ 
+         //ACA ES DONDE HAY QUE ARREGLAR QUE TRAIGA EL PRODUCTO CLICKEADO
+-        val product = intent.get
+-        val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment
+-        if (product != null) {
+-            detailFragment?.showProduct(product)
++        //val product = intent.get
++        //val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment
++        //if (product != null) {
++            //detailFragment?.showProduct(product)
+ /*
+         val product = intent.getParcelableExtra<Product>(PRODUCT)
+         val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment
+@@ -68,18 +69,17 @@
+             val intent= Intent(this, Shop::class.java).apply {  }
+ 
+             //DATOS EXTRA
+-            intent.putExtra("origen", "DETAIL");
+-
++            intent.putExtra("origen", product.id);
+             startActivity(intent)
+ 
+         }
+ 
+     }
+ 
+-}
++
+     fun animarCarrito (imageView: LottieAnimationView, animation:Int){
+         imageView.setAnimation(animation)
+-        imageView.speed=0.2f
++        imageView.speed=1.1f
+         imageView.playAnimation()
+     }
+ 

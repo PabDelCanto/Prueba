@@ -1,0 +1,163 @@
+Index: app/src/main/java/org/bedu/bedushop/Shop.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.bedu.bedushop\r\n\r\nimport android.Manifest\r\nimport android.animation.AnimatorInflater\r\nimport android.annotation.SuppressLint\r\nimport android.app.ActivityOptions\r\nimport android.content.Context\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport android.os.Bundle\r\nimport android.util.AttributeSet\r\nimport androidx.fragment.app.Fragment\r\n//import androidx.navigation.findNavController\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView\r\nimport android.content.Intent\r\nimport android.content.pm.PackageManager\r\nimport android.location.Geocoder\r\nimport android.location.LocationManager\r\nimport android.net.Uri\r\nimport android.transition.TransitionInflater\r\nimport android.util.Log\r\nimport android.view.*\r\nimport android.widget.*\r\nimport androidx.core.app.ActivityCompat\r\nimport androidx.core.app.ActivityOptionsCompat\r\nimport androidx.core.content.ContentProviderCompat.requireContext\r\nimport androidx.core.content.ContextCompat.startActivity\r\nimport androidx.core.view.ViewCompat\r\nimport androidx.core.view.isVisible\r\nimport com.google.android.gms.location.FusedLocationProviderClient\r\nimport com.google.android.gms.location.LocationServices\r\nimport com.google.android.material.progressindicator.LinearProgressIndicator\r\nimport io.realm.Realm\r\nimport kotlinx.android.synthetic.main.recycler_perfil.*\r\nimport java.util.*\r\n\r\n//Asignamos nuevas variables globales\r\nconst val USER_EMAIL_SHOP = \"org.bedu.bedushop.USER_EMAIL_SHOP\"\r\nconst val USER_FULL_NAME_SHOP = \"org.bedu.bedushop.USER_FULL_NAME_SHOP\"\r\nconst val USER_AVATAR_SHOP = \"org.bedu.bedushop.USER_AVATAR_SHOP\"\r\n\r\nclass Shop : AppCompatActivity() {\r\n\r\n    private  var usuarioFragment= UsuarioFragment()\r\n    private  var listaFragment= ListadoFragment()\r\n    private  var carritoFragment= CarritoFragment()\r\n    private lateinit var menuSuperior: Menu\r\n    private lateinit var progressBar: LinearProgressIndicator\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        setContentView(R.layout.activity_shop)\r\n        progressBar=findViewById(R.id.loadingBar)\r\n\r\n\r\n        //!! Transition sin terminar para el detail\r\n       val transitionXml = TransitionInflater.from(this).inflateTransition(R.transition.descripcion).apply {\r\n            excludeTarget(window.decorView.findViewById<View>(R.id.action_bar_container), true)\r\n            excludeTarget(android.R.id.statusBarBackground, true)\r\n            excludeTarget(android.R.id.navigationBarBackground, true)\r\n        }\r\n        window.exitTransition = transitionXml\r\n        //!! Transition sin terminar para el detail\r\n\r\n\r\n\r\n        /*Inicializa frament segun su origen\r\n        * Se es por Inicio seccion o registrar o DETAIL*/\r\n        val origen : String = intent.getStringExtra(\"origen\").toString()\r\n        if(origen == \"DETAIL\"){\r\n            replaceFragment(carritoFragment, null)\r\n\r\n            Toast.makeText(this, \"Producto Agregado\", Toast.LENGTH_SHORT).show()\r\n        }\r\n        else{\r\n            replaceFragment(listaFragment, null)\r\n        }\r\n\r\n\r\n        /*Controlador del navegador\r\n        * Dependiendo lo que seleccione el usuario en el Bottom Nav te envia a dicho fragment*/\r\n        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)\r\n        bottomNavigation.setOnNavigationItemSelectedListener {\r\n                item ->\r\n            when (item.itemId) {\r\n                R.id.menu_carrito -> {\r\n                    loading(progressBar)\r\n                    replaceFragment(carritoFragment, null)\r\n                    true\r\n                }\r\n\r\n                R.id.menu_usuario -> {\r\n                    loading(progressBar)\r\n                    var bundle = intent.extras //Recuperamos datos de bundle\r\n                    val email = bundle?.getString(USER_EMAIL)\r\n                    val fullName = bundle?.getString(USER_FULL_NAME)\r\n                    val avatar = bundle?.getString(USER_AVATAR)\r\n\r\n                    var bundleFrag = Bundle()//Reasignamos datos de bundle\r\n                    bundleFrag.putString(USER_EMAIL_SHOP, email)\r\n                    bundleFrag.putString(USER_FULL_NAME_SHOP, fullName)\r\n                    bundleFrag.putString(USER_AVATAR_SHOP,avatar)\r\n                    Log.d(\"Bundle Shop\", bundleFrag.toString())\r\n                    replaceFragment(usuarioFragment, bundleFrag)\r\n                    true\r\n                }\r\n                R.id.ic_inicio -> {\r\n                    loading(progressBar)\r\n                    replaceFragment(listaFragment, null)\r\n                    true\r\n                }\r\n                else -> {\r\n                    false\r\n                }\r\n            }\r\n\r\n        }\r\n\r\n        /*Iniciar actividad Detail*/\r\n\r\n        listaFragment.setListener{\r\n            val detailFragment = supportFragmentManager.findFragmentById(R.id.fragmentDetail) as? DetailFragment\r\n\r\n            // Pantalla grande, mostrar detalle en el fragment\r\n            if(detailFragment!=null){\r\n                detailFragment.showProduct(it)\r\n            } else{ //pantalla pequeña, navegar a un nuevo Activity\r\n                val intent = Intent(this, DetailActivity::class.java)\r\n                intent.putExtra(\"id\", it.id)\r\n\r\n                //!! Transition sin terminar para el detail\r\n\r\n               // EN ESTA SECCION PROBE DE USAR SHARED TRANSITION PERO NO ME GUSTO EL RESULTADO, PREGUNTAR A JAVI\r\n\r\n               /* val options = ViewCompat.getTransitionName(findViewById(R.id.cardviewLista))?.let {\r\n                    ActivityOptionsCompat.makeSceneTransitionAnimation(\r\n                        this, findViewById(R.id.cardviewLista), it\r\n                    )\r\n                }*/\r\n\r\n                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())\r\n            }\r\n        }\r\n\r\n\r\n    }\r\n        override fun onOptionsItemSelected(item: MenuItem): Boolean {\r\n            // Handle item selection\r\n            return when (item.itemId) {\r\n                R.id.search -> {\r\n                    Toast.makeText(this, \"Función no disponible\", Toast.LENGTH_SHORT).show()\r\n                    true\r\n\r\n                }\r\n                R.id.help -> {\r\n                    val url = \"https://www.bedu.org\"\r\n                    val i = Intent(Intent.ACTION_VIEW)\r\n                    i.data = Uri.parse(url)\r\n                    startActivity(i)\r\n                    true\r\n                }\r\n                else -> super.onOptionsItemSelected(item)\r\n            }\r\n        }\r\n        // Funcion que te levanta el fragment que se pasa por parametro\r\n        private fun replaceFragment(fragment: Fragment, bundle:Bundle?){\r\n            fragment.arguments = bundle//Enviamos Bundle, de existir\r\n            val trans = supportFragmentManager.beginTransaction()\r\n            trans.replace(R.id.fragemento_contenedor, fragment)\r\n            trans.addToBackStack(null)\r\n            trans.commit()\r\n        }\r\n        override fun onCreateOptionsMenu(menu: Menu): Boolean {\r\n            val inflater: MenuInflater = menuInflater\r\n            inflater.inflate(R.menu.menu_superior, menu)\r\n            return true\r\n        }\r\n\r\n    //funcion para activar la barrita de loading en los diferentes fragments\r\n        private fun loading(progressBar: LinearProgressIndicator){\r\n            progressBar.isVisible=true\r\n            AnimatorInflater.loadAnimator(this, R.animator.loading_bar).apply {\r\n                setTarget(progressBar)\r\n                start()\r\n            }\r\n        }\r\n\r\n\r\n    //Funciones para mostrar y ocultar la bottomNavBar\r\n\r\n    fun hideBottomNav() {\r\n        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)\r\n        bottomNavigation.visibility = View.GONE\r\n    }\r\n\r\n    fun showBottomNav() {\r\n        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)\r\n        bottomNavigation.visibility = View.VISIBLE\r\n    }\r\n\r\n\r\n\r\n\r\n    }\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/org/bedu/bedushop/Shop.kt b/app/src/main/java/org/bedu/bedushop/Shop.kt
+--- a/app/src/main/java/org/bedu/bedushop/Shop.kt	(revision f8f0e823effb5c41db745e841077d67ce2268cae)
++++ b/app/src/main/java/org/bedu/bedushop/Shop.kt	(date 1634520177148)
+@@ -4,6 +4,9 @@
+ import android.animation.AnimatorInflater
+ import android.annotation.SuppressLint
+ import android.app.ActivityOptions
++import android.app.Notification
++import android.app.NotificationChannel
++import android.app.NotificationManager
+ import android.content.Context
+ import androidx.appcompat.app.AppCompatActivity
+ import android.os.Bundle
+@@ -16,13 +19,17 @@
+ import android.location.Geocoder
+ import android.location.LocationManager
+ import android.net.Uri
++import android.os.Build
+ import android.transition.TransitionInflater
+ import android.util.Log
+ import android.view.*
+ import android.widget.*
+ import androidx.core.app.ActivityCompat
+ import androidx.core.app.ActivityOptionsCompat
++import androidx.core.app.NotificationCompat
++import androidx.core.app.NotificationManagerCompat
+ import androidx.core.content.ContentProviderCompat.requireContext
++import androidx.core.content.ContextCompat
+ import androidx.core.content.ContextCompat.startActivity
+ import androidx.core.view.ViewCompat
+ import androidx.core.view.isVisible
+@@ -46,12 +53,17 @@
+     private lateinit var menuSuperior: Menu
+     private lateinit var progressBar: LinearProgressIndicator
+ 
++
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         setContentView(R.layout.activity_shop)
+         progressBar=findViewById(R.id.loadingBar)
+ 
+ 
++
++
++
++
+         //!! Transition sin terminar para el detail
+        val transitionXml = TransitionInflater.from(this).inflateTransition(R.transition.descripcion).apply {
+             excludeTarget(window.decorView.findViewById<View>(R.id.action_bar_container), true)
+Index: app/src/main/java/org/bedu/bedushop/RecyclerAdapterOpciones.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.bedu.bedushop\r\n\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.ImageView\r\nimport android.widget.TextView\r\nimport android.widget.Toast\r\nimport androidx.fragment.app.FragmentManager\r\nimport androidx.recyclerview.widget.RecyclerView\r\n\r\n\r\nclass RecyclerAdapterOpciones(val options : List<Opciones>, val listener: (Opciones) -> Unit) :\r\n    RecyclerView.Adapter<RecyclerAdapterOpciones.ViewHolder>(){\r\n\r\n    class ViewHolder(view : View) : RecyclerView.ViewHolder(view){\r\n        private val opcion = view.findViewById<TextView>(R.id.tvOpcion)\r\n        private val imagen = view.findViewById<ImageView>(R.id.imgOpcion)\r\n        private val flecha = view.findViewById<ImageView>(R.id.flechita)\r\n\r\n        fun bind(option: Opciones){\r\n            opcion.text = option.opcion\r\n            imagen.setImageResource(option.vector)\r\n            flecha.setImageResource(option.flecha)\r\n\r\n            itemView.setOnClickListener {\r\n                if(opcion.text.toString() == \"Mis direcciones\"){\r\n                   // Toast.makeText(itemView.context, \"la opcion que elegiste es ${opcion.text}\", Toast.LENGTH_SHORT).show()\r\n\r\n                }\r\n            }\r\n        }\r\n\r\n\r\n\r\n\r\n    }\r\n    override fun onBindViewHolder(holder: ViewHolder, position: Int) {\r\n        holder.bind(options[position])\r\n        holder.itemView.setOnClickListener{ listener(options[position])}\r\n    }\r\n\r\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {\r\n        val view = LayoutInflater\r\n            .from(parent.context)\r\n            .inflate(R.layout.recycler_perfil, parent, false)\r\n        return ViewHolder(view)\r\n    }\r\n\r\n    override fun getItemCount(): Int {\r\n        return options.size\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/org/bedu/bedushop/RecyclerAdapterOpciones.kt b/app/src/main/java/org/bedu/bedushop/RecyclerAdapterOpciones.kt
+--- a/app/src/main/java/org/bedu/bedushop/RecyclerAdapterOpciones.kt	(revision f8f0e823effb5c41db745e841077d67ce2268cae)
++++ b/app/src/main/java/org/bedu/bedushop/RecyclerAdapterOpciones.kt	(date 1634524235448)
+@@ -5,7 +5,6 @@
+ import android.view.ViewGroup
+ import android.widget.ImageView
+ import android.widget.TextView
+-import android.widget.Toast
+ import androidx.fragment.app.FragmentManager
+ import androidx.recyclerview.widget.RecyclerView
+ 
+Index: app/src/main/java/org/bedu/bedushop/PagoExitosoFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.bedu.bedushop\r\n\r\nimport android.os.Bundle\r\nimport androidx.fragment.app.Fragment\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.Button\r\n\r\n\r\nclass PagoExitosoFragment : Fragment() {\r\n\r\n\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n\r\n    }\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater, container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View? {\r\n        // Inflate the layout for this fragment\r\n        val lista = ListadoFragment()\r\n        val view = inflater.inflate(R.layout.fragment_pago_exitoso, container, false)\r\n        val button = view.findViewById<Button>(R.id.btnFinal)\r\n        button.setOnClickListener {\r\n            replaceFragment(lista, null)\r\n\r\n            (activity as Shop).showBottomNav()\r\n        }\r\n\r\n\r\n\r\n        return view\r\n    }\r\n    private fun replaceFragment(fragment: Fragment, bundle:Bundle?){\r\n        fragment.arguments = bundle//Enviamos Bundle, de existir\r\n        val trans = requireActivity().supportFragmentManager.beginTransaction()\r\n        trans.replace(R.id.fragemento_contenedor, fragment)\r\n        trans.addToBackStack(null)\r\n        trans.commit()\r\n    }\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/org/bedu/bedushop/PagoExitosoFragment.kt b/app/src/main/java/org/bedu/bedushop/PagoExitosoFragment.kt
+--- a/app/src/main/java/org/bedu/bedushop/PagoExitosoFragment.kt	(revision f8f0e823effb5c41db745e841077d67ce2268cae)
++++ b/app/src/main/java/org/bedu/bedushop/PagoExitosoFragment.kt	(date 1634520422688)
+@@ -1,16 +1,25 @@
+ package org.bedu.bedushop
+ 
++import android.app.Notification
++import android.app.NotificationChannel
++import android.app.NotificationManager
++import android.content.Context
++import android.os.Build
+ import android.os.Bundle
+ import androidx.fragment.app.Fragment
+ import android.view.LayoutInflater
+ import android.view.View
+ import android.view.ViewGroup
+ import android.widget.Button
++import androidx.core.app.NotificationCompat
++import androidx.core.app.NotificationManagerCompat
++import androidx.core.content.ContextCompat.getSystemService
+ 
+ 
+ class PagoExitosoFragment : Fragment() {
+ 
+ 
++
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+ 
+@@ -24,9 +33,12 @@
+         val lista = ListadoFragment()
+         val view = inflater.inflate(R.layout.fragment_pago_exitoso, container, false)
+         val button = view.findViewById<Button>(R.id.btnFinal)
++
++
++
+         button.setOnClickListener {
++
+             replaceFragment(lista, null)
+-
+             (activity as Shop).showBottomNav()
+         }
+ 
+Index: app/src/main/java/org/bedu/bedushop/Product.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.bedu.bedushop\r\n\r\nimport android.os.Parcel\r\nimport android.os.Parcelable\r\nimport io.realm.RealmObject\r\nimport io.realm.annotations.PrimaryKey\r\nimport org.json.JSONObject\r\nimport retrofit2.http.Url\r\n\r\nopen class Product:RealmObject(){\r\n    @PrimaryKey\r\n    var id: Int? =null\r\n\r\n    var name: String? =null\r\n    var price: Float?=null\r\n    var description: String?=null\r\n    var category: String? =null\r\n    var rate: Float? = null\r\n    var idImage: String? =null\r\n    var numOpinions: String? =null\r\n\r\n\r\n\r\n\r\n}\r\n\r\n\r\n/*class Product (\r\n    val name: String,\r\n    val description: String,\r\n    val price: String,\r\n    val rating: Float,\r\n    val idImage: String,\r\n    val numOpinions: Int\r\n): Parcelable {\r\n    constructor(parcel: Parcel) : this(\r\n        parcel.readString()!!,\r\n        parcel.readString()!!,\r\n        parcel.readString()!!,\r\n        parcel.readFloat()!!,\r\n        parcel.readString()!!,\r\n        parcel.readInt()!!\r\n    ) {\r\n    }\r\n\r\n    override fun writeToParcel(parcel: Parcel, flags: Int) {\r\n        parcel.writeString(name)\r\n        parcel.writeString(description)\r\n        parcel.writeString(price)\r\n        parcel.writeFloat(rating)\r\n        parcel.writeString(idImage)\r\n        parcel.writeInt(numOpinions)\r\n    }\r\n\r\n    override fun describeContents(): Int {\r\n        return 0\r\n    }\r\n\r\n    companion object CREATOR : Parcelable.Creator<Product> {\r\n        override fun createFromParcel(parcel: Parcel): Product {\r\n            return Product(parcel)\r\n        }\r\n\r\n        override fun newArray(size: Int): Array<Product?> {\r\n            return arrayOfNulls(size)\r\n        }\r\n    }\r\n}*/
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/org/bedu/bedushop/Product.kt b/app/src/main/java/org/bedu/bedushop/Product.kt
+--- a/app/src/main/java/org/bedu/bedushop/Product.kt	(revision f8f0e823effb5c41db745e841077d67ce2268cae)
++++ b/app/src/main/java/org/bedu/bedushop/Product.kt	(date 1634522358511)
+@@ -18,6 +18,7 @@
+     var rate: Float? = null
+     var idImage: String? =null
+     var numOpinions: String? =null
++    var stock: String = "0"
+ 
+ 
+ 
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n    id 'kotlin-android'\r\n    id 'kotlin-android-extensions'\r\n    id 'kotlin-kapt'\r\n    id 'realm-android'\r\n}\r\n\r\nandroid {\r\n    compileSdk 30\r\n\r\n    defaultConfig {\r\n        applicationId \"org.bedu.bedushop\"\r\n        minSdk 21\r\n        targetSdk 30\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n        debug{\r\n            applicationIdSuffix \".debug\"\r\n            debuggable true\r\n        }\r\n    }\r\n    flavorDimensions 'theme'\r\n    productFlavors{\r\n        light{\r\n            applicationId \"org.bedu.buildvariant.light\"\r\n            dimension \"theme\"\r\n            applicationIdSuffix \".light\"\r\n            versionNameSuffix \"-light\"\r\n        }\r\n        dark{\r\n            applicationId \"org.bedu.buildvariant.dark\"\r\n            dimension \"theme\"\r\n            applicationIdSuffix \".dark\"\r\n            versionNameSuffix \"-dark\"\r\n        }\r\n    }\r\n\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n    kotlinOptions {\r\n        jvmTarget = '1.8'\r\n    }\r\n\r\n    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {\r\n        kotlinOptions {\r\n            jvmTarget = \"1.8\"\r\n        }\r\n    }\r\n}\r\n\r\ndependencies {\r\n    //Dependencias para usar retrofit, okhttp y picasso\r\n    implementation \"com.squareup.retrofit2:retrofit:2.7.0\"\r\n    implementation 'com.squareup.retrofit2:converter-gson:2.7.0'\r\n    implementation 'com.google.code.gson:gson:2.8.7'\r\n    implementation 'com.squareup.picasso:picasso:2.5.2'\r\n    implementation 'androidx.core:core-ktx:1.6.0'\r\n    implementation 'androidx.appcompat:appcompat:1.3.1'\r\n    implementation 'com.google.android.material:material:1.4.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'\r\n    implementation 'androidx.legacy:legacy-support-v4:1.0.0'\r\n    //Implementaciones para usar la libreria de lottie de animaciones\r\n    def lottieVersion = \"3.4.0\"\r\n    implementation \"com.airbnb.android:lottie:$lottieVersion\"\r\n    api 'com.google.android.material:material:1.3.0-alpha03'\r\n    implementation 'com.google.android.gms:play-services-base:17.6.0'\r\n    testImplementation 'junit:junit:4.+'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\r\n\r\n\r\n    //okhttp\r\n    implementation \"com.squareup.okhttp3:okhttp:4.2.2\"\r\n    implementation(\"com.squareup.okhttp3:okhttp:4.9.0\")\r\n    implementation 'com.google.code.gson:gson:2.8.6'\r\n\r\n    //Navigation\r\n    implementation \"androidx.navigation:navigation-fragment-ktx:2.3.5\"\r\n    implementation \"androidx.navigation:navigation-ui-ktx:2.3.5\"\r\n\r\n\r\n    //GPS\r\n    implementation 'com.google.android.gms:play-services-location:17.0.0'\r\n\r\n\r\n    //firebase\r\n    implementation platform('com.google.firebase:firebase-bom:28.4.2')\r\n    implementation 'com.google.firebase:firebase-analytics-ktx'\r\n    implementation 'com.google.firebase:firebase-messaging-ktx'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision f8f0e823effb5c41db745e841077d67ce2268cae)
++++ b/app/build.gradle	(date 1634481255214)
+@@ -53,6 +53,10 @@
+         jvmTarget = '1.8'
+     }
+ 
++    realm {
++        syncEnabled = true;
++    }
++
+     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+         kotlinOptions {
+             jvmTarget = "1.8"

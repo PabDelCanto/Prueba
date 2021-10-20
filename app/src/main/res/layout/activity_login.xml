@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundNegro"
+    android:orientation="vertical"
+    tools:layout_editor_absoluteX="1dp"
+    tools:layout_editor_absoluteY="1dp"
+    tools:context=".MainActivity"
+    tools:ignore="ExtraText"
+    android:id="@+id/loginLayout"
+    >
+
+    //logo Imagen y texto
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:scaleType="fitEnd"
+        app:srcCompat="@drawable/logo_bedu"
+        />
+
+    <TextView
+        android:id="@+id/appName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/backgroundNegro"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textColor="@color/NaranjaBedu"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="90dp"
+        tools:visibility="visible" />
+
+
+
+    //Inputs mail y contraseña
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailAddress"
+        android:layout_width="251dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:hint="@string/correo"
+        android:textColorHint="@color/hint"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/hint"
+        app:boxStrokeWidth="2dp"
+        app:startIconDrawable="@drawable/person"
+        app:startIconTint="@color/hint"
+        app:hintTextColor="@color/hint"
+        app:errorEnabled="true"
+        >
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:textColor="@color/blanco"
+            android:background="@null"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/Password"
+        android:layout_width="251dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:hint="@string/pass"
+        android:textColorHint="@color/hint"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/hint"
+        app:boxStrokeWidth="2dp"
+        app:startIconDrawable="@drawable/candado"
+        app:startIconTint="@color/hint"
+        app:endIconMode="password_toggle"
+        app:endIconTint="@color/hint"
+        app:hintTextColor="@color/hint"
+        app:errorEnabled="true"
+
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@color/blanco"
+            android:background="@null"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--<EditText
+       android:id="@+id/EmailAddress"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center"
+       android:layout_marginBottom="10dp"
+       android:drawableLeft="@drawable/person"
+       android:hint="@string/hintMail"
+       android:inputType="textEmailAddress"
+       android:textColor="@color/blanco"
+       android:textColorHint="#80FFFFFF" />
+
+  <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:id="@+id/mailInvalido"
+       android:visibility="invisible"
+       android:layout_gravity="center"
+       android:text="@string/mailIncorrecto"/>
+
+
+    <EditText
+        android:id="@+id/Password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:drawableLeft="@drawable/candado"
+        android:ems="10"
+        android:hint="@string/hintContraseña"
+        android:inputType="textPassword"
+        android:textAlignment="center"
+        android:textColor="@color/blanco"
+        android:textColorHint="#80FFFFFF" />
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/passwordIncorrecto"
+      android:visibility="invisible"
+      android:layout_gravity="center"
+      android:text="@string/passIncorrecto"/>-->
+
+    //Botones de Inicio de Sesión y registo
+    <Button
+        android:id="@+id/inicio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/NaranjaBedu"
+        android:text="@string/inicioSesion"
+        android:textColor="@color/blanco"
+        />
+
+
+    <Button
+        android:id="@+id/registro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/registro"
+        android:backgroundTint="@color/backgroundNegro"
+        android:textColor="@color/blanco"
+        android:layout_marginBottom="110dp"/>
+
+</LinearLayout>

@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.BEDUSHOP" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/backgroundNegro</item>
+        <item name="colorPrimaryVariant">@color/backgroundNegro</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/NaranjaBedu</item>
+        <item name="colorSecondaryVariant">@color/NaranjaBedu</item>
+        <item name="colorOnSecondary">@color/blanco</item>
+        <!-- Background color. -->
+        <item name="backgroundColor">#232323</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+
+
+
+</resources>

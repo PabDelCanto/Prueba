@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/listadoFragment">
+
+    <fragment
+        android:id="@+id/carritoFragment"
+        android:name="org.bedu.bedushop.CarritoFragment"
+        android:label="fragment_carrito"
+        tools:layout="@layout/fragment_carrito" >
+        <action
+            android:id="@+id/action_carritoFragment_to_listadoFragment"
+            app:destination="@id/listadoFragment" />
+        <action
+            android:id="@+id/action_carritoFragment_to_usuarioFragment"
+            app:destination="@id/usuarioFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/usuarioFragment"
+        android:name="org.bedu.bedushop.UsuarioFragment"
+        android:label="fragment_usuario"
+        tools:layout="@layout/fragment_usuario" >
+        <action
+            android:id="@+id/action_usuarioFragment_to_carritoFragment"
+            app:destination="@id/carritoFragment" />
+        <action
+            android:id="@+id/action_usuarioFragment_to_listadoFragment"
+            app:destination="@id/listadoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listadoFragment"
+        android:name="org.bedu.bedushop.ListadoFragment"
+        android:label="fragment_listado"
+        tools:layout="@layout/fragment_listado" >
+        <action
+            android:id="@+id/action_listadoFragment_to_usuarioFragment"
+            app:destination="@id/usuarioFragment" />
+        <action
+            android:id="@+id/action_listadoFragment_to_carritoFragment"
+            app:destination="@id/carritoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resumenPagoFragment"
+        android:name="org.bedu.bedushop.ResumenPagoFragment"
+        android:label="fragment_resumen_pago"
+        tools:layout="@layout/fragment_resumen_pago" />
+</navigation>

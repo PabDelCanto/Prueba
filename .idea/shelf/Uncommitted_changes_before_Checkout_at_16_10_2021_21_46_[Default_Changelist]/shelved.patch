@@ -1,0 +1,27 @@
+Index: app/src/main/java/org/bedu/bedushop/BottomSheetFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.bedu.bedushop\r\n\r\nimport android.Manifest\r\nimport android.annotation.SuppressLint\r\nimport android.app.Activity\r\nimport android.content.Context\r\nimport android.content.pm.PackageManager\r\nimport android.location.LocationManager\r\nimport android.os.Bundle\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.widget.Button\r\nimport android.widget.TextView\r\nimport androidx.core.app.ActivityCompat\r\nimport androidx.core.content.ContextCompat.getSystemService\r\nimport androidx.core.location.LocationManagerCompat.isLocationEnabled\r\nimport com.google.android.gms.location.FusedLocationProviderClient\r\nimport com.google.android.gms.location.LocationServices\r\nimport com.google.android.material.bottomsheet.BottomSheetDialogFragment\r\nimport android.content.DialogInterface\r\nimport android.location.Geocoder\r\nimport java.util.*\r\n\r\n\r\nclass BottomSheetFragment(): BottomSheetDialogFragment() {\r\n    companion object{\r\n        const val PERMISSION_ID = 33\r\n    }\r\n    private lateinit var direccion : TextView\r\n\r\n    lateinit var mFusedLocationClient: FusedLocationProviderClient\r\n\r\n    override fun onCreateView(\r\n        inflater: LayoutInflater,\r\n        container: ViewGroup?,\r\n        savedInstanceState: Bundle?\r\n    ): View? {\r\n        val view = inflater.inflate(R.layout.bottom_sheet_fragment,container,false)\r\n        direccion = view.findViewById(R.id.locacionTV)\r\n        return view\r\n    }\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        super.onViewCreated(view, savedInstanceState)\r\n        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())\r\n\r\n        //Funcionalidad botones BottomSheet\r\n\r\n\r\n        val botonCerrar = view.findViewById<Button>(R.id.cerrar).setOnClickListener {\r\n            dismiss()\r\n        }\r\n        val botonActualizar = view.findViewById<Button>(R.id.actualizarDir).setOnClickListener {\r\n            getLocation()\r\n        }\r\n\r\n\r\n    }\r\n    private fun checkGranted(permission: String): Boolean{\r\n        return ActivityCompat.checkSelfPermission(requireActivity(), permission) == PackageManager.PERMISSION_GRANTED\r\n    }\r\n\r\n    \r\n    private fun checkPermissions(): Boolean {\r\n        if ( checkGranted(Manifest.permission.ACCESS_COARSE_LOCATION) &&\r\n            checkGranted(Manifest.permission.ACCESS_COARSE_LOCATION) ){\r\n            return true\r\n        }\r\n        return false\r\n    }\r\n    private fun requestPermissions() {\r\n        ActivityCompat.requestPermissions(\r\n            requireActivity(),\r\n            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),\r\n            PERMISSION_ID\r\n        )\r\n    }\r\n    private fun isLocationEnabled(): Boolean {\r\n        var locationManager: LocationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager\r\n        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(\r\n            LocationManager.NETWORK_PROVIDER\r\n        )\r\n    }\r\n\r\n    @SuppressLint(\"MissingPermission\")\r\n    private fun getLocation() {\r\n        if (checkPermissions()) { //verificamos si tenemos permisos\r\n            if (isLocationEnabled()) { //localizamos sólo si el GPS está encendido\r\n\r\n                mFusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->\r\n                    val geocoder = Geocoder(requireActivity(), Locale.getDefault())\r\n                    val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)\r\n                    direccion.text = addresses.toString()\r\n\r\n\r\n                }\r\n            }\r\n        } else{\r\n            //si no se tiene permiso, pedirlo\r\n            requestPermissions()\r\n        }\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/org/bedu/bedushop/BottomSheetFragment.kt b/app/src/main/java/org/bedu/bedushop/BottomSheetFragment.kt
+--- a/app/src/main/java/org/bedu/bedushop/BottomSheetFragment.kt	
++++ b/app/src/main/java/org/bedu/bedushop/BottomSheetFragment.kt	
+@@ -20,6 +20,7 @@
+ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+ import android.content.DialogInterface
+ import android.location.Geocoder
++import android.widget.Toast
+ import java.util.*
+ 
+ 
+@@ -94,6 +95,8 @@
+                     direccion.text = addresses.toString()
+ 
+ 
++
++
+                 }
+             }
+         } else{
